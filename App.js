@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import SunmiV2Printer from 'react-native-sunmi-v2-printer';
+import SunmiPrinter from '@heasy/react-native-sunmi-printer';
 import ViewShot, {captureRef} from 'react-native-view-shot';
 
 const App = () => {
@@ -72,7 +73,7 @@ const App = () => {
       await SunmiV2Printer.printOriginalText('DELIVERY NOTES');
       await SunmiV2Printer.setFontWeight(false);
       await SunmiV2Printer.setAlignment(2);
-      await SunmiV2Printer.printOriginalText('Rider collects: 09:09/n');
+      await SunmiV2Printer.printOriginalText('Rider collects: 09:09\n');
       await SunmiV2Printer.setAlignment(0);
       await SunmiV2Printer.setFontSize(30);
       await SunmiV2Printer.printOriginalText(
@@ -194,21 +195,32 @@ const App = () => {
               reader.onload = async function () {
                 try {
                   let logobase64 = this.result.replace(
-                    'data:image/jpeg;base64,',
+                    'data:image/png;base64,',
                     '',
                   );
 
-                  // console.log(logobase64);
+                  console.log(this.result);
+                  ToastAndroid.show(
+                    logobase64?.length ?? 'base64 len N/A',
+                    500,
+                  );
 
                   // ToastAndroid.show('printing', 1500);
                   await SunmiV2Printer.printerInit();
                   // ToastAndroid.show('next printing', 1500);
+
+                  await SunmiV2Printer.setAlignment(1);
 
                   await SunmiV2Printer.printBitmap(
                     logobase64,
                     384 /*width*/,
                     380 /*height*/,
                   );
+
+                  // console.log(SunmiPrinter);
+
+                  // SunmiPrinter.printerInit();
+                  // SunmiPrinter.printBitmap(logobase64, 384);
                 } catch (err) {
                   ToastAndroid.show(
                     err?.message ?? 'inside print command',
@@ -336,9 +348,9 @@ const App = () => {
         }}>
         <Text>{'Printing the above UI'}</Text>
         <Text>{`Printer Status: ${status}`}</Text>
-        <TouchableOpacity style={styles.button} onPress={print}>
+        {/* <TouchableOpacity style={styles.button} onPress={print}>
           <Text style={styles.buttonText}>Print</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity style={styles.button} onPress={printBitmap}>
           <Text style={styles.buttonText}>Print Bitmap</Text>
         </TouchableOpacity>
