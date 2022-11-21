@@ -188,52 +188,77 @@ const App = () => {
     try {
       viewRef.current.capture().then(
         async uri => {
-          fetch(uri)
-            .then(response => response.blob())
-            .then(blob => {
-              var reader = new FileReader();
-              reader.onload = async function () {
-                try {
-                  let logobase64 = this.result.replace(
-                    'data:image/png;base64,',
-                    '',
-                  );
+          console.log(uri);
+          try {
+            fetch(uri)
+              .then(response => response.blob())
+              .then(blob => {
+                var reader = new FileReader();
+                reader.onload = async function () {
+                  try {
+                    let logobase64 = this.result.replace(
+                      'data:image/png;base64,',
+                      '',
+                    );
 
-                  console.log(this.result);
-                  ToastAndroid.show(
-                    logobase64?.length ?? 'base64 len N/A',
-                    500,
-                  );
+                    // ToastAndroid.show('printing', 1500);
+                    await SunmiV2Printer.printerInit();
+                    // ToastAndroid.show('next printing', 1500);
 
-                  // ToastAndroid.show('printing', 1500);
-                  await SunmiV2Printer.printerInit();
-                  // ToastAndroid.show('next printing', 1500);
+                    await SunmiV2Printer.setAlignment(1);
 
-                  await SunmiV2Printer.setAlignment(1);
+                    await SunmiV2Printer.printBitmap(
+                      logobase64,
+                      384 /*width*/,
+                      380 /*height*/,
+                    );
+                  } catch (err) {
+                    ToastAndroid.show(err?.message, 500);
+                  }
+                  // try {
+                  //   let logobase64 = this.result.replace(
+                  //     'data:image/png;base64,',
+                  //     '',
+                  //   );
 
-                  await SunmiV2Printer.printBitmap(
-                    logobase64,
-                    384 /*width*/,
-                    380 /*height*/,
-                  );
+                  //   // console.log(this.result);
+                  //   ToastAndroid.show(
+                  //     logobase64?.length ?? 'base64 len N/A',
+                  //     500,
+                  //   );
 
-                  // console.log(SunmiPrinter);
+                  //   // ToastAndroid.show('printing', 1500);
+                  //   // await SunmiV2Printer.printerInit();
+                  //   // // ToastAndroid.show('next printing', 1500);
 
-                  // SunmiPrinter.printerInit();
-                  // SunmiPrinter.printBitmap(logobase64, 384);
-                } catch (err) {
-                  ToastAndroid.show(
-                    err?.message ?? 'inside print command',
-                    1500,
-                  );
-                }
-              }; // <--- `this.result` contains a base64 data URI
-              reader.readAsDataURL(blob);
-            });
+                  //   // await SunmiV2Printer.setAlignment(1);
+
+                  //   // await SunmiV2Printer.printBitmap(
+                  //   //   logobase64,
+                  //   //   384 /*width*/,
+                  //   //   380 /*height*/,
+                  //   // );
+
+                  //   // console.log(SunmiPrinter);
+
+                  //   // SunmiPrinter.printerInit();
+                  //   // SunmiPrinter.printBitmap(logobase64, 384);
+                  // } catch (err) {
+                  //   ToastAndroid.show(
+                  //     err?.message ?? 'inside print command',
+                  //     1500,
+                  //   );
+                  // }
+                }; // <--- `this.result` contains a base64 data URI
+                reader.readAsDataURL(blob);
+              });
+          } catch (err) {
+            ToastAndroid.show(err?.message, 500);
+          }
         },
         error => {
-          console.log('in error');
-          throw new Error(typeof error === String ? error : 'Internal error');
+          console.log('in error', error);
+          // throw new Error(typeof error === String ? error : 'Internal error');
         },
       );
     } catch (e) {
