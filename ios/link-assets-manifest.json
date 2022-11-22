@@ -1,0 +1,13 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/AdobeCleanBold.otf",
+      "sha1": "5f5a3b0d275da1ee0b611d6c584db4d814039131"
+    },
+    {
+      "path": "assets/fonts/AdobeCleanRegular.otf",
+      "sha1": "c87dca37a95fe9a559f6e75294350f5793c23197"
+    }
+  ]
+}
